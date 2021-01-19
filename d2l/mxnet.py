@@ -314,7 +314,8 @@ def predict_ch3(net, test_iter, n=6):
     trues = d2l.get_fashion_mnist_labels(y)
     preds = d2l.get_fashion_mnist_labels(d2l.argmax(net(X), axis=1))
     titles = [true + '\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
+    d2l.show_images(d2l.reshape(X[0:n], (n, 28, 28)), 1, n,
+                    titles=titles[0:n])
 
 
 # Defined in file: ./chapter_multilayer-perceptrons/underfit-overfit.md
@@ -428,7 +429,8 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
     """Train a model with a GPU (defined in Chapter 6)."""
     net.initialize(force_reinit=True, ctx=device, init=init.Xavier())
     loss = gluon.loss.SoftmaxCrossEntropyLoss()
-    trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr})
+    trainer = gluon.Trainer(net.collect_params(), 'sgd',
+                            {'learning_rate': lr})
     animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],
                             legend=['train loss', 'train acc', 'test acc'])
     timer, num_batches = d2l.Timer(), len(train_iter)
@@ -637,8 +639,8 @@ def load_data_time_machine(batch_size, num_steps, use_random_iter=False,
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
 class RNNModelScratch:
     """An RNN Model implemented from scratch."""
-    def __init__(self, vocab_size, num_hiddens, device, get_params, init_state,
-                 forward_fn):
+    def __init__(self, vocab_size, num_hiddens, device, get_params,
+                 init_state, forward_fn):
         self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
         self.params = get_params(vocab_size, num_hiddens, device)
         self.init_state, self.forward_fn = init_state, forward_fn
@@ -938,8 +940,8 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
 
 
 # Defined in file: ./chapter_recurrent-modern/seq2seq.md
-def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps, device,
-                    save_attention_weights=False):
+def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
+                    device, save_attention_weights=False):
     """Predict for sequence to sequence."""
     src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
         src_vocab['<eos>']]
@@ -1364,8 +1366,8 @@ def resnet18(num_classes):
         blk = nn.Sequential()
         for i in range(num_residuals):
             if i == 0 and not first_block:
-                blk.add(d2l.Residual(num_channels, use_1x1conv=True,
-                                     strides=2))
+                blk.add(
+                    d2l.Residual(num_channels, use_1x1conv=True, strides=2))
             else:
                 blk.add(d2l.Residual(num_channels))
         return blk
@@ -1373,8 +1375,8 @@ def resnet18(num_classes):
     net = nn.Sequential()
     # This model uses a smaller convolution kernel, stride, and padding and
     # removes the maximum pooling layer
-    net.add(nn.Conv2D(64, kernel_size=3, strides=1, padding=1), nn.BatchNorm(),
-            nn.Activation('relu'))
+    net.add(nn.Conv2D(64, kernel_size=3, strides=1, padding=1),
+            nn.BatchNorm(), nn.Activation('relu'))
     net.add(resnet_block(64, 2, first_block=True), resnet_block(128, 2),
             resnet_block(256, 2), resnet_block(512, 2))
     net.add(nn.GlobalAvgPool2D(), nn.Dense(num_classes))
@@ -1609,11 +1611,12 @@ def multibox_target(anchors, labels):
     for i in range(batch_size):
         label = labels[i, :, :]
         anchors_bbox_map = match_anchor_to_bbox(label[:, 1:], anchors, device)
-        bbox_mask = np.tile((np.expand_dims((anchors_bbox_map >= 0), axis=-1)),
-                            (1, 4)).astype('int32')
+        bbox_mask = np.tile((np.expand_dims(
+            (anchors_bbox_map >= 0), axis=-1)), (1, 4)).astype('int32')
         # Initialize class_labels and assigned bbox coordinates with zeros
         class_labels = d2l.zeros(num_anchors, dtype=np.int32, ctx=device)
-        assigned_bb = d2l.zeros((num_anchors, 4), dtype=np.float32, ctx=device)
+        assigned_bb = d2l.zeros((num_anchors, 4), dtype=np.float32,
+                                ctx=device)
         # Assign class labels to the anchor boxes using matched gt bbox labels
         # If no gt bbox is assigned to an anchor box, then let the
         # class_labels and assigned_bb remain zero, i.e the background class
@@ -1690,8 +1693,9 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
 
 
 # Defined in file: ./chapter_computer-vision/object-detection-dataset.md
-d2l.DATA_HUB['banana-detection'] = (d2l.DATA_URL + 'banana-detection.zip',
-                                    '5de26c8fce5ccdea9f91267273464dc968d20d72')
+d2l.DATA_HUB['banana-detection'] = (
+    d2l.DATA_URL + 'banana-detection.zip',
+    '5de26c8fce5ccdea9f91267273464dc968d20d72')
 
 
 # Defined in file: ./chapter_computer-vision/object-detection-dataset.md
@@ -1720,8 +1724,8 @@ def read_data_bananas(is_train=True):
 class BananasDataset(gluon.data.Dataset):
     def __init__(self, is_train):
         self.features, self.labels = read_data_bananas(is_train)
-        print('read ' + str(len(self.features)) +
-              (f' training examples' if is_train else f' validation examples'))
+        print('read ' + str(len(self.features)) + (
+            f' training examples' if is_train else f' validation examples'))
 
     def __getitem__(self, idx):
         return (self.features[idx].astype('float32').transpose(
@@ -1811,7 +1815,8 @@ class VOCSegDataset(gluon.data.Dataset):
         self.crop_size = crop_size
         features, labels = read_voc_images(voc_dir, is_train=is_train)
         self.features = [
-            self.normalize_image(feature) for feature in self.filter(features)]
+            self.normalize_image(feature)
+            for feature in self.filter(features)]
         self.labels = self.filter(labels)
         self.colormap2label = build_colormap2label()
         print('read ' + str(len(self.features)) + ' examples')
@@ -1840,13 +1845,12 @@ def load_data_voc(batch_size, crop_size):
     voc_dir = d2l.download_extract('voc2012',
                                    os.path.join('VOCdevkit', 'VOC2012'))
     num_workers = d2l.get_dataloader_workers()
-    train_iter = gluon.data.DataLoader(VOCSegDataset(True, crop_size, voc_dir),
-                                       batch_size, shuffle=True,
-                                       last_batch='discard',
-                                       num_workers=num_workers)
-    test_iter = gluon.data.DataLoader(VOCSegDataset(False, crop_size, voc_dir),
-                                      batch_size, last_batch='discard',
-                                      num_workers=num_workers)
+    train_iter = gluon.data.DataLoader(
+        VOCSegDataset(True, crop_size, voc_dir), batch_size, shuffle=True,
+        last_batch='discard', num_workers=num_workers)
+    test_iter = gluon.data.DataLoader(
+        VOCSegDataset(False, crop_size, voc_dir), batch_size,
+        last_batch='discard', num_workers=num_workers)
     return train_iter, test_iter
 
 
@@ -1903,8 +1907,9 @@ def reorg_train_valid(data_dir, labels, valid_ratio):
 # Defined in file: ./chapter_computer-vision/kaggle-cifar10.md
 def reorg_test(data_dir):
     for test_file in os.listdir(os.path.join(data_dir, 'test')):
-        copyfile(os.path.join(data_dir, 'test', test_file),
-                 os.path.join(data_dir, 'train_valid_test', 'test', 'unknown'))
+        copyfile(
+            os.path.join(data_dir, 'test', test_file),
+            os.path.join(data_dir, 'train_valid_test', 'test', 'unknown'))
 
 
 # Defined in file: ./chapter_computer-vision/kaggle-dog.md
@@ -2020,7 +2025,8 @@ def load_data_ptb(batch_size, max_window_size, num_noise_words):
     all_centers, all_contexts = get_centers_and_contexts(
         corpus, max_window_size)
     all_negatives = get_negatives(all_contexts, corpus, num_noise_words)
-    dataset = gluon.data.ArrayDataset(all_centers, all_contexts, all_negatives)
+    dataset = gluon.data.ArrayDataset(all_centers, all_contexts,
+                                      all_negatives)
     data_iter = gluon.data.DataLoader(dataset, batch_size, shuffle=True,
                                       batchify_fn=batchify,
                                       num_workers=num_workers)
@@ -2069,7 +2075,8 @@ class TokenEmbedding:
 
     def __getitem__(self, tokens):
         indices = [
-            self.token_to_idx.get(token, self.unknown_idx) for token in tokens]
+            self.token_to_idx.get(token, self.unknown_idx)
+            for token in tokens]
         vecs = self.idx_to_vec[d2l.tensor(indices)]
         return vecs
 
@@ -2275,8 +2282,9 @@ def _pad_bert_inputs(examples, max_len, vocab):
     for (token_ids, pred_positions, mlm_pred_label_ids, segments,
          is_next) in examples:
         all_token_ids.append(
-            np.array(token_ids + [vocab['<pad>']] * (max_len - len(token_ids)),
-                     dtype='int32'))
+            np.array(
+                token_ids + [vocab['<pad>']] * (max_len - len(token_ids)),
+                dtype='int32'))
         all_segments.append(
             np.array(segments + [0] * (max_len - len(segments)),
                      dtype='int32'))
@@ -2318,8 +2326,8 @@ class _WikiTextDataset(gluon.data.Dataset):
         examples = []
         for paragraph in paragraphs:
             examples.extend(
-                _get_nsp_data_from_paragraph(paragraph, paragraphs, self.vocab,
-                                             max_len))
+                _get_nsp_data_from_paragraph(paragraph, paragraphs,
+                                             self.vocab, max_len))
         # Get data for the masked language model task
         examples = [(_get_mlm_data_from_tokens(tokens, self.vocab) +
                      (segments, is_next))
@@ -2360,7 +2368,8 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X_shards,
          pred_positions_X_shard, mlm_weights_X_shard, mlm_Y_shard,
          nsp_y_shard) in zip(tokens_X_shards, segments_X_shards,
                              valid_lens_x_shards, pred_positions_X_shards,
-                             mlm_weights_X_shards, mlm_Y_shards, nsp_y_shards):
+                             mlm_weights_X_shards, mlm_Y_shards,
+                             nsp_y_shards):
         # Forward pass
         _, mlm_Y_hat, nsp_Y_hat = net(tokens_X_shard, segments_X_shard,
                                       valid_lens_x_shard.reshape(-1),
@@ -2625,7 +2634,8 @@ def train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
             metric.add(l, values[0].shape[0], values[0].size)
             timer.stop()
         if len(kwargs) > 0:  # It will be used in section AutoRec
-            test_rmse = evaluator(net, test_iter, kwargs['inter_mat'], devices)
+            test_rmse = evaluator(net, test_iter, kwargs['inter_mat'],
+                                  devices)
         else:
             test_rmse = evaluator(net, test_iter, devices)
         train_l = l / (i+1)
