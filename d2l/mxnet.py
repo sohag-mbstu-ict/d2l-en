@@ -1353,8 +1353,8 @@ class Benchmark:
 def split_batch(X, y, devices):
     """Split `X` and `y` into multiple devices."""
     assert X.shape[0] == y.shape[0]
-    return (gluon.utils.split_and_load(X, devices),
-            gluon.utils.split_and_load(y, devices))
+    return (gluon.utils.split_and_load(
+        X, devices), gluon.utils.split_and_load(y, devices))
 
 
 # Defined in file: ./chapter_computational-performance/multiple-gpus-concise.md
@@ -1724,8 +1724,8 @@ class BananasDataset(gluon.data.Dataset):
               (f' training examples' if is_train else f' validation examples'))
 
     def __getitem__(self, idx):
-        return (self.features[idx].astype('float32').transpose(2, 0, 1),
-                self.labels[idx])
+        return (self.features[idx].astype('float32').transpose(
+            2, 0, 1), self.labels[idx])
 
     def __len__(self):
         return len(self.features)
@@ -1827,8 +1827,8 @@ class VOCSegDataset(gluon.data.Dataset):
     def __getitem__(self, idx):
         feature, label = voc_rand_crop(self.features[idx], self.labels[idx],
                                        *self.crop_size)
-        return (feature.transpose(2, 0, 1),
-                voc_label_indices(label, self.colormap2label))
+        return (feature.transpose(
+            2, 0, 1), voc_label_indices(label, self.colormap2label))
 
     def __len__(self):
         return len(self.features)
@@ -1840,9 +1840,9 @@ def load_data_voc(batch_size, crop_size):
     voc_dir = d2l.download_extract('voc2012',
                                    os.path.join('VOCdevkit', 'VOC2012'))
     num_workers = d2l.get_dataloader_workers()
-    train_iter = gluon.data.DataLoader(VOCSegDataset(True, crop_size,
-                                                     voc_dir), batch_size,
-                                       shuffle=True, last_batch='discard',
+    train_iter = gluon.data.DataLoader(VOCSegDataset(True, crop_size, voc_dir),
+                                       batch_size, shuffle=True,
+                                       last_batch='discard',
                                        num_workers=num_workers)
     test_iter = gluon.data.DataLoader(VOCSegDataset(False, crop_size, voc_dir),
                                       batch_size, last_batch='discard',
@@ -1926,8 +1926,8 @@ def read_ptb():
 # Defined in file: ./chapter_natural-language-processing-pretraining/word-embedding-dataset.md
 def subsampling(sentences, vocab):
     # Map low frequency words into <unk>
-    sentences = [[vocab.idx_to_token[vocab[tk]] for tk in line]
-                 for line in sentences]
+    sentences = [
+        [vocab.idx_to_token[vocab[tk]] for tk in line] for line in sentences]
     # Count the frequency for each word
     counter = d2l.count_corpus(sentences)
     num_tokens = sum(counter.values())
